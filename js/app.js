@@ -302,8 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                          data-chapter-title="${chapter.title}"
                          data-p-index="${pIndex}"
                          data-chap-index="${chapIndex}"
-                         title="点击展开/收起译注对照">
-                      <span class="bookmark-btn" title="添加/取消书签">🔖</span>
+                         title="单击展开/折叠译注，双击收藏书签">
                       ${pHTML}
                     </div>
                   `;
@@ -317,8 +316,8 @@ document.addEventListener("DOMContentLoaded", () => {
                        data-sutra-title="${sutra.title}"
                        data-chapter-title="${chapter.title}"
                        data-p-index="${pIndex}"
-                       data-chap-index="${chapIndex}">
-                      <span class="bookmark-btn" title="添加/取消书签">🔖</span>
+                       data-chap-index="${chapIndex}"
+                       title="双击收藏/取消书签">
                       ${formattedText}
                     </p>
                   `;
@@ -361,72 +360,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 250);
   }
 
-  // 段落交互事件（展开/折叠及书签控制）
+  // 段落交互事件（展开/折叠及双击书签控制）
   function setupParagraphListeners() {
     const paragraphs = readerArticle.querySelectorAll(".sutra-paragraph");
     paragraphs.forEach(p => {
-      // 1. 段落点击事件：用于展开/折叠译注对照
-      p.addEventListener("click", (e) => {
-        // 如果点击的是书签按钮，不触发展开折叠
-        if (e.target.classList.contains("bookmark-btn")) return;
-        
+      // 1. 单击事件：用于展开/折叠译注对照
+      p.addEventListener("click", () => {
         // 只有具有译注的段落才支持展开折叠
         if (p.classList.contains("has-trans")) {
           p.classList.toggle("expanded");
         }
       });
 
-      // 2. 书签按钮点击事件
-      const bookmarkBtn = p.querySelector(".bookmark-btn");
-      if (bookmarkBtn) {
-        bookmarkBtn.addEventListener("click", (e) => {
-          e.stopPropagation(); // 阻止事件冒泡到段落点击
+      // 2. 双击事件：用于添加/取消书签
+      p.addEventListener("dblclick", (e) => {
+        e.preventDefault(); // 阻止默认的文本选中行为
+        window.getSelection().removeAllRanges(); // 清除选中状态
 
-          const pId = p.id;
-          const sutraTitle = p.dataset.sutraTitle;
-          const chapterTitle = p.dataset.chapterTitle;
-          const pIndex = parseInt(p.dataset.pIndex, 10);
-          const chapIndex = parseInt(p.dataset.chapIndex, 10);
-          
-          // 获取纯原文文本（排除书签图标、序号、译文和注释）
-          let text = "";
-          const origTextNode = p.querySelector(".sutra-original-text");
-          if (origTextNode) {
-            text = origTextNode.textContent.trim();
-          } else {
-            // 传统经文（排除 .bookmark-btn 节点后的文本）
-            text = Array.from(p.childNodes)
-              .filter(node => node.nodeType === Node.TEXT_NODE || (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("bookmark-btn")))
-              .map(node => node.textContent)
-              .join("")
-              .trim();
-          }
+        const pId = p.id;
+        const sutraTitle = p.dataset.sutraTitle;
+        const chapterTitle = p.dataset.chapterTitle;
+        const pIndex = parseInt(p.dataset.pIndex, 10);
+        const chapIndex = parseInt(p.dataset.chapIndex, 10);
+        
+        // 获取纯原文文本（排除序号、译文和注释）
+        let text = "";
+        const origTextNode = p.querySelector(".sutra-original-text");
+        if (origTextNode) {
+          text = origTextNode.textContent.trim();
+        } else {
+          // 传统经文（获取纯文本子节点）
+          text = Array.from(p.childNodes)
+            .filter(node => node.nodeType === Node.TEXT_NODE)
+            .map(node => node.textContent)
+            .join("")
+            .trim();
+        }
 
-          const bookmarkIndex = bookmarks.findIndex(b => b.id === pId);
-          if (bookmarkIndex > -1) {
-            // 取消书签
-            bookmarks.splice(bookmarkIndex, 1);
-            p.classList.remove("bookmarked");
-            showFloatingText("已取消书签", p);
-          } else {
-            // 添加书签
-            bookmarks.push({
-              id: pId,
-              sutraId: currentSutraId,
-              sutraTitle: sutraTitle,
-              chapterTitle: chapterTitle,
-              chapIndex: chapIndex,
-              pIndex: pIndex,
-              excerpt: text
-            });
-            p.classList.add("bookmarked");
-            showFloatingText("🔖 已添加书签", p);
-          }
+        const bookmarkIndex = bookmarks.findIndex(b => b.id === pId);
+        if (bookmarkIndex > -1) {
+          // 取消书签
+          bookmarks.splice(bookmarkIndex, 1);
+          p.classList.remove("bookmarked");
+          showFloatingText("已取消书签", p);
+        } else {
+          // 添加书签
+          bookmarks.push({
+            id: pId,
+            sutraId: currentSutraId,
+            sutraTitle: sutraTitle,
+            chapterTitle: chapterTitle,
+            chapIndex: chapIndex,
+            pIndex: pIndex,
+            excerpt: text
+          });
+          p.classList.add("bookmarked");
+          showFloatingText("🔖 已添加书签", p);
+        }
 
-          saveSettings("zen-bookmarks", JSON.stringify(bookmarks));
-          renderBookmarks();
-        });
-      }
+        saveSettings("zen-bookmarks", JSON.stringify(bookmarks));
+        renderBookmarks();
+      });
     });
   }
 

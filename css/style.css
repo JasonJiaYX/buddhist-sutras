@@ -22,10 +22,11 @@ body.theme-sand {
   --text-secondary: #70654c;
   --text-muted: #9e9378;
   --accent-color: #b38235;
-  --accent-light: rgba(179, 130, 53, 0.1);
+  --accent-light: rgba(179, 130, 53, 0.08);
   --card-bg: #ffffff;
   --card-hover-shadow: 0 8px 30px rgba(44, 37, 18, 0.06);
   --scrollbar-thumb: #d3ccbc;
+  --bookmark-color: #b83b26; /* 传统朱砂红，用于模拟朱批 */
 }
 
 /* 2. 古朴竹简主题 (Sepia) */
@@ -38,10 +39,11 @@ body.theme-sepia {
   --text-secondary: #6e4e37;
   --text-muted: #8d705c;
   --accent-color: #a8581c;
-  --accent-light: rgba(168, 88, 28, 0.12);
+  --accent-light: rgba(168, 88, 28, 0.1);
   --card-bg: #f3e6c9;
   --card-hover-shadow: 0 8px 30px rgba(92, 64, 51, 0.1);
   --scrollbar-thumb: #cdbc97;
+  --bookmark-color: #8c2514; /* 深赭红，适合竹简 */
 }
 
 /* 3. 禅静深灰主题 (Charcoal) */
@@ -54,10 +56,11 @@ body.theme-charcoal {
   --text-secondary: #a3998b;
   --text-muted: #70685e;
   --accent-color: #d4af37;
-  --accent-light: rgba(212, 175, 55, 0.15);
+  --accent-light: rgba(212, 175, 55, 0.12);
   --card-bg: #1e1e1e;
   --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   --scrollbar-thumb: #333333;
+  --bookmark-color: #ffd700; /* 亮金色，模拟黑宣纸上的泥金写经 */
 }
 
 /* ===== 基础重置与排版 ===== */
@@ -447,15 +450,11 @@ button {
   line-height: var(--reader-line-height, 1.75);
   margin-bottom: 24px;
   text-indent: 0;
-  transition: color 0.2s, background-color 0.2s;
-  padding: 8px 40px 8px 12px; /* 给右侧书签按钮留出空间 */
+  transition: all 0.3s ease;
+  padding: 8px 16px;
   border-radius: 6px;
-  cursor: default;
-  position: relative;
-}
-
-.sutra-paragraph.has-trans {
   cursor: pointer;
+  position: relative;
 }
 
 .sutra-paragraph.verse-paragraph {
@@ -534,37 +533,29 @@ button {
   opacity: 0.85;
 }
 
-.bookmark-btn {
-  position: absolute;
-  right: 12px;
-  top: 10px;
-  font-size: 14px;
-  opacity: 0.2;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.2s;
-  user-select: none;
-  z-index: 10;
+/* 已收藏书签的段落样式 - 禅意朱批/金粉写经 */
+.sutra-paragraph.bookmarked {
+  background-color: var(--accent-light) !important;
+  border-left: 3px solid var(--bookmark-color);
+  color: var(--bookmark-color); /* 传统纯文本经文被收藏时整体变色 */
+  transition: all 0.3s ease;
 }
 
-.sutra-paragraph:hover .bookmark-btn {
-  opacity: 0.65;
+.sutra-paragraph.bookmarked .sutra-original-text,
+.sutra-paragraph.bookmarked .sutra-paragraph-num {
+  color: var(--bookmark-color) !important;
+  font-weight: 600;
 }
 
-.sutra-paragraph.bookmarked .bookmark-btn {
-  opacity: 1 !important;
-  transform: scale(1.15);
-  animation: bookmark-pop-corner 0.3s var(--transition-bezier);
+/* 保持展开后的译文与注释颜色不被染红/染金，维持原样 */
+.sutra-paragraph.bookmarked .sutra-translation {
+  color: var(--text-secondary) !important;
 }
-
-.bookmark-btn:hover {
-  opacity: 1 !important;
-  transform: scale(1.3) !important;
+.sutra-paragraph.bookmarked .sutra-notes {
+  color: var(--text-muted) !important;
 }
-
-@keyframes bookmark-pop-corner {
-  0% { transform: scale(0); }
-  70% { transform: scale(1.35); }
-  100% { transform: scale(1.15); }
+.sutra-paragraph.bookmarked .sutra-note-item {
+  color: var(--text-muted) !important;
 }
 
 /* 阅读进度指示器 */
@@ -937,13 +928,9 @@ button {
     padding: 4px 6px;
   }
   
-  .bookmark-btn {
-    opacity: 0.45;
-    right: 8px;
-    top: 6px;
-  }
   .sutra-paragraph {
-    padding: 6px 32px 6px 8px;
+    margin-bottom: 20px;
+    padding: 6px 12px;
   }
 
   .bookmarks-drawer {
