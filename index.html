@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>禅境阅经 - 随时随地的佛经阅读与静心空间</title>
+  <meta name="description" content="禅境阅经是一个极其优美、宁静的佛经阅读网站。收录大乘经典、真言咒语，支持个性化阅读设置及电子木鱼静心，随时随地开启净心之旅。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-sand">
+
+  <!-- 遮罩层 (移动端展开侧边栏时使用) -->
+  <div class="overlay" id="overlay"></div>
+
+  <div class="app-container">
+    
+    <!-- 1. 侧边栏导航 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <span class="brand-icon">🪷</span>
+          <h1>禅境阅经</h1>
+        </div>
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="检索经文或译者...">
+        </div>
+      </div>
+      
+      <div class="sidebar-content" id="sutraListContainer">
+        <!-- 由 JavaScript 动态渲染分类经文 -->
+      </div>
+    </aside>
+
+    <!-- 2. 主页面区 -->
+    <main class="main-content">
+      <!-- 滚动进度条 -->
+      <div class="reading-progress-bar" id="readingProgressBar"></div>
+
+      <!-- 控制栏 -->
+      <header class="settings-bar">
+        <div class="left-controls">
+          <button class="toggle-sidebar-btn" id="toggleSidebarBtn" title="展开/收起目录">☰</button>
+        </div>
+        
+        <div class="right-controls">
+          <!-- 字号微调 -->
+          <div class="control-group font-adjust">
+            <button class="control-btn" id="btnFontDecrease" title="缩小字号">A-</button>
+            <span class="control-btn" id="btnFontSizeIndicator" style="cursor: default; pointer-events: none;">18px</span>
+            <button class="control-btn" id="btnFontIncrease" title="放大字号">A+</button>
+          </div>
+
+          <!-- 主题切换 -->
+          <div class="theme-selectors">
+            <div class="theme-dot dot-sand active" data-theme="theme-sand" title="宣纸黄"></div>
+            <div class="theme-dot dot-sepia" data-theme="theme-sepia" title="古朴竹简"></div>
+            <div class="theme-dot dot-charcoal" data-theme="theme-charcoal" title="禅静黑"></div>
+          </div>
+
+          <!-- 译注切换 (当加载具有译注的文本时显示) -->
+          <div class="control-group trans-notes-toggle" id="transNotesToggleGroup" style="display: none;">
+            <button class="control-btn active" id="btnToggleTrans" title="显示/隐藏译文">译</button>
+            <button class="control-btn active" id="btnToggleNotes" title="显示/隐藏注释">注</button>
+          </div>
+
+          <!-- 书签列表触发器 -->
+          <button class="control-btn" id="btnToggleBookmarks" title="我的书签">🔖 书签</button>
+        </div>
+      </header>
+
+      <!-- 阅读器正文容器 -->
+      <div class="reader-container" id="readerContainer">
+        <article class="reader-article" id="readerArticle">
+          <!-- 由 JavaScript 动态渲染经文原文 -->
+        </article>
+      </div>
+
+      <!-- 3. 书签抽屉 (Bookmarks Drawer) -->
+      <div class="bookmarks-drawer" id="bookmarksDrawer">
+        <div class="bookmarks-header">
+          <h3>我的书签</h3>
+          <button class="close-panel-btn" id="btnCloseBookmarks">×</button>
+        </div>
+        <div class="bookmarks-content">
+          <ul class="bookmark-list" id="bookmarkList">
+            <!-- 书签项 -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4. 电子木鱼悬浮挂件 -->
+      <div class="wooden-fish-widget">
+        <!-- 悬浮小按钮 -->
+        <button class="muyu-btn" id="muyuBtn" title="电子木鱼">🪵</button>
+        
+        <!-- 木鱼敲击主控板 (Glassmorphism Panel) -->
+        <div class="muyu-panel" id="muyuPanel">
+          <div class="muyu-panel-header">
+            <span class="muyu-panel-title">敲木鱼 • 积功德</span>
+            <button class="close-panel-btn" id="closePanelBtn">×</button>
+          </div>
+          
+          <div class="muyu-container">
+            <!-- 敲击木鱼的矢量图 -->
+            <div class="muyu-svg-wrapper" id="muyuSvgWrapper">
+              <svg class="muyu-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- 鱼身轮廓 -->
+                <path d="M 100,30 
+                         C 140,30 170,60 170,100 
+                         C 170,135 145,165 110,170 
+                         C 105,171 100,165 100,160 
+                         C 100,155 105,150 110,148 
+                         C 135,140 150,120 150,100 
+                         C 150,70 128,50 100,50 
+                         C 72,50 50,70 50,100 
+                         C 50,120 65,140 90,148 
+                         C 95,150 100,155 100,160 
+                         C 100,165 95,171 90,170 
+                         C 55,165 30,135 30,100 
+                         C 30,60 60,30 100,30 Z" 
+                      fill="currentColor" />
+                <!-- 鱼眼 -->
+                <circle cx="130" cy="80" r="7" fill="var(--bg-color)" />
+                <circle cx="130" cy="80" r="3.5" fill="currentColor" />
+                <!-- 声波开口 -->
+                <path d="M 60,115 C 80,100 120,100 140,115 C 148,122 148,128 140,133 C 120,143 80,143 60,133 C 52,128 52,122 60,115 Z" 
+                      fill="var(--bg-color)" />
+                <path d="M 70,124 Q 100,114 130,124" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none" />
+              </svg>
+            </div>
+            
+            <div class="muyu-stats">
+              当前累计功德: <span id="gongdeCountSpan">0</span>
+            </div>
+          </div>
+          
+          <div class="muyu-options">
+            <span>敲击音效 (Web Audio)</span>
+            <div class="switch-wrapper">
+              <span style="font-size: 11px; opacity: 0.8;">自动敲击</span>
+              <div class="custom-switch" id="autoMuyuSwitch"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 引入佛经数据与核心控制脚本 -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
