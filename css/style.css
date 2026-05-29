@@ -448,10 +448,14 @@ button {
   margin-bottom: 24px;
   text-indent: 0;
   transition: color 0.2s, background-color 0.2s;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 8px 40px 8px 12px; /* 给右侧书签按钮留出空间 */
+  border-radius: 6px;
+  cursor: default;
   position: relative;
+}
+
+.sutra-paragraph.has-trans {
+  cursor: pointer;
 }
 
 .sutra-paragraph.verse-paragraph {
@@ -474,9 +478,15 @@ button {
 .reader-article.hide-translation .sutra-translation {
   display: none;
 }
+.reader-article.hide-translation .sutra-paragraph.expanded .sutra-translation {
+  display: block;
+}
 
 .reader-article.hide-notes .sutra-notes {
   display: none;
+}
+.reader-article.hide-notes .sutra-paragraph.expanded .sutra-notes {
+  display: flex;
 }
 
 /* 序号样式 */
@@ -524,20 +534,37 @@ button {
   opacity: 0.85;
 }
 
-.sutra-paragraph.bookmarked::before {
-  content: "🔖";
+.bookmark-btn {
   position: absolute;
-  left: -24px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 12px;
+  top: 10px;
   font-size: 14px;
-  animation: bookmark-pop 0.3s var(--transition-bezier);
+  opacity: 0.2;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  user-select: none;
+  z-index: 10;
 }
 
-@keyframes bookmark-pop {
-  0% { transform: translateY(-50%) scale(0); }
-  70% { transform: translateY(-50%) scale(1.2); }
-  100% { transform: translateY(-50%) scale(1); }
+.sutra-paragraph:hover .bookmark-btn {
+  opacity: 0.65;
+}
+
+.sutra-paragraph.bookmarked .bookmark-btn {
+  opacity: 1 !important;
+  transform: scale(1.15);
+  animation: bookmark-pop-corner 0.3s var(--transition-bezier);
+}
+
+.bookmark-btn:hover {
+  opacity: 1 !important;
+  transform: scale(1.3) !important;
+}
+
+@keyframes bookmark-pop-corner {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.35); }
+  100% { transform: scale(1.15); }
 }
 
 /* 阅读进度指示器 */
@@ -910,9 +937,13 @@ button {
     padding: 4px 6px;
   }
   
-  .sutra-paragraph.bookmarked::before {
-    left: -16px;
-    font-size: 11px;
+  .bookmark-btn {
+    opacity: 0.45;
+    right: 8px;
+    top: 6px;
+  }
+  .sutra-paragraph {
+    padding: 6px 32px 6px 8px;
   }
 
   .bookmarks-drawer {
