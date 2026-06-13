@@ -277,7 +277,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   let pHTML = ``;
                   
                   // 1. 原文部分 (加入序号和原文内容)
-                  pHTML += `<span class="sutra-paragraph-num">${p.num}</span>`;
+                  if (p.num) {
+                    pHTML += `<span class="sutra-paragraph-num">${p.num}</span>`;
+                  }
                   pHTML += `<span class="sutra-original-text">${p.original}</span>`;
                   
                   // 2. 译文部分 (如果存在就生成，显示/隐藏由 CSS 控制)
