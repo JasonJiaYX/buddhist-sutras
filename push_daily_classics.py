@@ -16,6 +16,20 @@ CLASSICS_FILES = [
     "pumen-pin.json"
 ]
 
+# Authoritative masters mapping for each book to avoid bias
+BOOK_MASTERS = {
+    "daodejing.json": "王弼、河上公、陈鼓应等道家注疏宗师",
+    "qingjingjing.json": "葛洪、杜光庭、混然子等历代道教科仪与内丹大师",
+    "taishang.json": "惠吉、印光大师等积德行善与因果劝善大师",
+    "yinzhiwen.json": "印光大师、净空法师等修身立德与善恶因果阐释名家",
+    "liaofan.json": "袁了凡原作本意、印光大师、弘一大师等命自我立、积善改过之修身大师",
+    "lunyu.json": "朱熹（四书章句集注）、钱穆（论语新解）、何晏、程颐程颢等儒家理学与心学宗师",
+    "zhong-yong.json": "朱熹、子思、王阳明（致良知）等儒家心性之学宗师",
+    "xin-jing.json": "玄奘法师、六祖慧能、印顺导师、圣严法师等禅宗与大乘般若空性宗师",
+    "jingang-jing.json": "鸠摩罗什、六祖慧能（金刚经口诀）、傅大士、昭明太子等金刚般若要义宗师",
+    "pumen-pin.json": "竺法护、鸠摩罗什、印光大师、太虚大师等观音普门圆通与慈悲度生法门大师"
+}
+
 def load_gemini_api_key():
     # 1. Check environment variable
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -235,8 +249,9 @@ def main():
     
     if gemini_key:
         print("Calling Gemini API for master-level translation and reflection...")
+        masters = BOOK_MASTERS.get(selected_file, "钱穆、南怀瑾等诸子百家解读大师")
         system_instruction = (
-            "你是一位精通儒释道经典、融汇贯通传统文化的国学大师（风格融合钱穆、南怀瑾等诸子百家解读大师的深厚见解与讲学风格）。\n"
+            f"你是一位精通儒释道经典、融汇贯通传统文化的国学大师（在解读本书时，你的风格与见解深度融合了{masters}的学术与修身精髓）。\n"
             "针对给出的国学经典段落（及可能附带的现有译文和注释），请提供最符合权威学术释义的现代白话译文，"
             "并结合国学大师级别的深厚智慧，为现代读者撰写一段立意深远、直击人心、用于修身省己的人生启迪与生活修行指南。\n"
             "要求：内容必须深刻、有启发性，避免平庸空洞的鸡汤词句。请输出符合以下JSON Schema的JSON对象：\n"
