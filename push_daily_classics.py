@@ -13,7 +13,7 @@ CLASSICS_FILES = [
     "daodejing.json", "taishang.json", "qingjingjing.json", 
     "lunyu.json", "zhong-yong.json", "liaofan.json", 
     "yinzhiwen.json", "xin-jing.json", "jingang-jing.json", 
-    "pumen-pin.json", "yijing.json", "zhuangzi.json"
+    "pumen-pin.json", "yijing.json", "zhuangzi.json", "tanjing.json"
 ]
 
 # Authoritative masters mapping for each book to avoid bias
@@ -29,7 +29,8 @@ BOOK_MASTERS = {
     "jingang-jing.json": "鸠摩罗什、六祖慧能（金刚经口诀）、傅大士、昭明太子等金刚般若要义宗师",
     "pumen-pin.json": "竺法护、鸠摩罗什、印光大师、太虚大师等观音普门圆通与慈悲度生法门大师",
     "yijing.json": "王弼、程颐（伊川易传）、朱熹（周易本义）、南怀瑾（易经杂说）等易经象数与义理宗师",
-    "zhuangzi.json": "郭象（庄子注）、成玄英（庄子疏）、陈鼓应（庄子今注今译）、南怀瑾（庄子諵譁）等庄子逍遥义理与玄学宗师"
+    "zhuangzi.json": "郭象（庄子注）、成玄英（庄子疏）、陈鼓应（庄子今注今译）、南怀瑾（庄子諵譁）等庄子逍遥义理与玄学宗师",
+    "tanjing.json": "六祖惠能、憨山大师（坛经直解）、南怀瑾（如何修证佛法）、圣严法师等禅宗心地法门与直指见性宗师"
 }
 
 def load_gemini_api_key():
