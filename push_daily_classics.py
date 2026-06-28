@@ -260,8 +260,31 @@ def main():
             translation = result_json.get("translation", translation)
             explanation = result_json.get("explanation", "")
             
-    # 4. Formulate markdown text for Feishu
-    markdown_content = f"**【经典出处】**\n《{title}》 · {chapter_title}\n\n"
+    # 4. Formulate date and lunar calendar (UTC+8)
+    date_str = ""
+    try:
+        from datetime import datetime, timezone, timedelta
+        from zhdate import ZhDate
+        tz_beijing = timezone(timedelta(hours=8))
+        now_beijing = datetime.now(timezone.utc) + timedelta(hours=8)
+        now_beijing_naive = now_beijing.replace(tzinfo=None)
+        lunar_date = ZhDate.from_datetime(now_beijing_naive)
+        lunar_str = lunar_date.chinese()
+        parts = lunar_str.split()
+        lunar_md = parts[0][5:] if len(parts[0]) > 5 else parts[0]
+        date_str = f"📅 **{now_beijing.strftime('%Y年%m月%d日')}** (农历{lunar_md})\n\n"
+    except Exception as e:
+        print(f"Failed to get lunar date: {e}", file=sys.stderr)
+        try:
+            from datetime import datetime, timezone, timedelta
+            now_beijing = datetime.now(timezone.utc) + timedelta(hours=8)
+            date_str = f"📅 **{now_beijing.strftime('%Y年%m月%d日')}**\n\n"
+        except Exception:
+            pass
+
+    # 5. Formulate markdown text for Feishu
+    markdown_content = date_str
+    markdown_content += f"**【经典出处】**\n《{title}》 · {chapter_title}\n\n"
     markdown_content += f"**【经典原文】**\n> {original_text}\n\n"
     
     if translation:
@@ -276,7 +299,7 @@ def main():
         if not gemini_key:
             markdown_content += "*(提示：系统未检测到 GEMINI_API_KEY。配置密钥后，云端可自动生成大师级的译文和修身启迪。)*\n"
             
-    # 5. Send message
+    # 6. Send message
     webhook_url = load_feishu_webhook()
     card_title = "🪷 每日国学经典"
     
