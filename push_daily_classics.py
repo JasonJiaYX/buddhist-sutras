@@ -13,7 +13,7 @@ CLASSICS_FILES = [
     "daodejing.json", "taishang.json", "qingjingjing.json", 
     "lunyu.json", "zhong-yong.json", "liaofan.json", 
     "yinzhiwen.json", "xin-jing.json", "jingang-jing.json", 
-    "pumen-pin.json"
+    "pumen-pin.json", "yijing.json"
 ]
 
 # Authoritative masters mapping for each book to avoid bias
